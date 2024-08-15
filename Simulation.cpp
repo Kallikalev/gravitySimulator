@@ -14,6 +14,26 @@ Simulation::Simulation()  {
 
 std::vector<Simulation::PhysicsObject>* Simulation::step(float deltaTime) {
     for (int i = 0; i < objects.size(); i++) {
+        for (int j = i + 1; j < objects.size(); j++) {
+            float dist = glm::length(objects[i].position - objects[j].position);
+            if (dist <= std::max(objects[i].radius, objects[j].radius)) {
+                // velocity via conservation of momentum
+                objects[i].velocity = (objects[i].velocity * objects[i].mass +
+                                       objects[j].velocity * objects[j].mass)
+                                      / (objects[i].mass + objects[j].mass);
+                // center of mass via weighted average
+                objects[i].position = (objects[i].position * objects[i].mass +
+                                       objects[j].position * objects[j].mass)
+                                      / (objects[i].mass + objects[j].mass);
+                objects[i].mass += objects[j].mass;
+                objects.erase(objects.begin() + j);
+                j--;
+                objects[i].correctRadius();
+            }
+        }
+    }
+
+    for (int i = 0; i < objects.size(); i++) {
         for (int j = 0; j < objects.size(); j++) {
             if (i != j) {
                 glm::vec2 diff = objects[j].position - objects[i].position;
@@ -29,8 +49,6 @@ std::vector<Simulation::PhysicsObject>* Simulation::step(float deltaTime) {
     for (PhysicsObject& object : objects) {
         object.position += object.velocity * deltaTime;
     }
-
-//    objects[0].position = glm::vec2(0.1f);
 
     return &objects;
 }
