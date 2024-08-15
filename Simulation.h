@@ -13,7 +13,8 @@
 class Simulation {
 public:
     unsigned int WORLD_SIZE = 100; // number of arbitrary length units from the center to the edge of the world
-    float G = 100; // gravitational constant
+    constexpr const static float G = 100; // gravitational constant
+    constexpr const static float density = 1.0f/5; // mass per unit area
 
     struct PhysicsObject {
         glm::vec2 position; // in world coordinates
@@ -21,11 +22,13 @@ public:
         float mass;
         float radius; // in terms of world size
 
-        PhysicsObject(glm::vec2 position, glm::vec2 velocity, float mass, float radius) :
-            position(position), velocity(velocity), mass(mass), radius(radius) {}
+        PhysicsObject(glm::vec2 position, glm::vec2 velocity, float mass) :
+            position(position), velocity(velocity), mass(mass) {
+            radius = (float)sqrt(mass / (density * M_PI));
+        }
 
-        PhysicsObject(glm::vec2 position, float mass, float radius) :
-                position(position), velocity(glm::vec2(0.0f)), mass(mass), radius(radius) {}
+        PhysicsObject(glm::vec2 position, float mass) :
+                PhysicsObject(position, glm::vec2(0.0f), mass) {}
     };
 
     Simulation();

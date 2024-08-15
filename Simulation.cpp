@@ -7,7 +7,7 @@
 Simulation::Simulation()  {
     for (int x = -100; x <= 100; x += 10) {
         for (int y = -100; y <= 100; y += 10) {
-                objects.emplace_back(glm::vec2(x, y), 0.1, 0.5f);
+                objects.emplace_back(glm::vec2(x, y), 5);
         }
     }
 }
