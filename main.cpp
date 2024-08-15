@@ -171,7 +171,7 @@ int main() {
         float elapsed_time_sec = elapsed_time_micro / 1000000;
         t_last = t_cur;
 
-        for (Simulation::PhysicsObject obj : *sim.step(elapsed_time_sec)) {
+        for (PhysicsObject obj : *sim.step(elapsed_time_sec)) {
             glm::mat4 trans = glm::mat4(1.0f);
             glm::vec3 translation = glm::vec3(obj.position / Simulation::WORLD_SIZE,0.0f);
             trans = glm::translate(trans,translation);
