@@ -10,7 +10,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_HEIGHT = 800;
 
 const char *vertexShaderSource = "#version 330 core\n"
                                  "layout (location = 0) in vec3 aPos;\n"
@@ -91,16 +91,32 @@ int main() {
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
+    float scalingFac = 1.0f/(1.0f + (float)sqrt(2));
+    scalingFac /= 2;
+
     // set up vertex data (and buffer(s)) and configure vertex attributes
     float vertices[] = {
-            0.5f,  0.5f, 0.0f,  // top right
-            0.5f, -0.5f, 0.0f,  // bottom right
-            -0.5f, -0.5f, 0.0f,  // bottom left
-            -0.5f,  0.5f, 0.0f   // top left
+            0.0f, 0.0f, 0.0f, // center
+            +1.0f * scalingFac,  +(1.0f + (float)sqrt(2.0f)) * scalingFac, 0.0f,
+            +(1.0f + (float)sqrt(2.0f)) * scalingFac, +1.0f * scalingFac, 0.0f,
+            +(1.0f + (float)sqrt(2.0f)) * scalingFac, -1.0f * scalingFac, 0.0f,
+            +1.0f * scalingFac,  -(1.0f + (float)sqrt(2.0f)) * scalingFac, 0.0f,
+            -1.0f * scalingFac,  -(1.0f + (float)sqrt(2.0f)) * scalingFac, 0.0f,
+            -(1.0f + (float)sqrt(2.0f)) * scalingFac, -1.0f * scalingFac, 0.0f,
+            -(1.0f + (float)sqrt(2.0f)) * scalingFac, +1.0f * scalingFac, 0.0f,
+            -1.0f * scalingFac,  +(1.0f + (float)sqrt(2.0f)) * scalingFac, 0.0f,
+
+
     };
-    unsigned int indices[] = {  // note that we start from 0!
-            0, 1, 3,   // first triangle
-            1, 2, 3    // second triangle
+    unsigned int indices[] = {
+            0,1,2,
+            0, 2, 3,
+            0, 3, 4,
+            0, 4, 5,
+            0, 5, 6,
+            0, 6, 7,
+            0, 7, 8,
+            0, 8, 1
     };
 
     unsigned int VBO, VAO, EBO;
@@ -136,7 +152,7 @@ int main() {
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, nullptr);
 
 
         // check and call events and swap the buffers
