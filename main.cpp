@@ -3,12 +3,16 @@
 //
 
 #include <iostream>
+#include <chrono>
+
 #include "include/glad/glad.h"
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+#include "Simulation.h"
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -98,7 +102,6 @@ int main() {
     glDeleteShader(fragmentShader);
 
     float scalingFac = 1.0f/(1.0f + (float)sqrt(2));
-    scalingFac /= 2;
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     float vertices[] = {
@@ -149,6 +152,9 @@ int main() {
     // uncomment this call to draw in wireframe polygons.
 //    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+    Simulation sim;
+    auto t_last = std::chrono::high_resolution_clock::now();
+
     while(!glfwWindowShouldClose(window)) {
         // rendering commands here
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -160,8 +166,19 @@ int main() {
         glBindVertexArray(VAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 
-        glUniformMatrix4fv((int)transformLoc, 1, GL_FALSE, glm::value_ptr(glm::translate(glm::mat4(1.0f),glm::vec3(0.5,0.0,0.0))));
-        glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, nullptr);
+        auto t_cur = std::chrono::high_resolution_clock::now();
+        float elapsed_time_micro = std::chrono::duration<float, std::micro>(t_cur - t_last).count();
+        float elapsed_time_sec = elapsed_time_micro / 1000000;
+        t_last = t_cur;
+
+        for (Simulation::PhysicsObject obj : *sim.step(elapsed_time_sec)) {
+            glm::mat4 trans = glm::mat4(1.0f);
+            glm::vec3 translation = glm::vec3(obj.position / (float)sim.WORLD_SIZE,0.0f);
+            trans = glm::translate(trans,translation);
+            trans = glm::scale(trans,glm::vec3(obj.radius / float(sim.WORLD_SIZE)));
+            glUniformMatrix4fv((int)transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+            glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, nullptr);
+        }
 
         // check and call events and swap the buffers
 

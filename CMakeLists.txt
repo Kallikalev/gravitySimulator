@@ -17,7 +17,7 @@ include_directories(include/glad)
 include_directories(include/GLFW)
 include_directories(include/KHR)
 
-add_executable(gravitySimulator main.cpp)
+add_executable(gravitySimulator main.cpp Simulation.cpp Simulation.h)
 
 
 target_link_libraries(gravitySimulator ${PROJECT_SOURCE_DIR}/lib/libglfw.3.3.dylib)
