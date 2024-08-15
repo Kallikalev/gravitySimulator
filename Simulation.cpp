@@ -5,21 +5,32 @@
 #include "Simulation.h"
 
 Simulation::Simulation()  {
-    objects.emplace_back(glm::vec2(20.0f, 0.0f), 5.0f);
-    objects.emplace_back(glm::vec2(-50.0f, 25.0f), 25.0f);
+    for (int x = -100; x <= 100; x += 10) {
+        for (int y = -100; y <= 100; y += 10) {
+                objects.emplace_back(glm::vec2(x, y), 0.1, 0.5f);
+        }
+    }
 }
 
-float speed = 10.0f; // distance units per second
-
 std::vector<Simulation::PhysicsObject>* Simulation::step(float deltaTime) {
-    glm::vec2 mov0 = (objects[1].position - objects[0].position);
-    mov0 = mov0/glm::length(mov0);
-    mov0 = mov0 * speed;
-    objects[0].position = objects[0].position + mov0 * deltaTime;
+    for (int i = 0; i < objects.size(); i++) {
+        for (int j = 0; j < objects.size(); j++) {
+            if (i != j) {
+                glm::vec2 diff = objects[j].position - objects[i].position;
+                float len = glm::length(diff);
+                glm::vec2 dir = diff / len;
+                float force = G * objects[i].mass * objects[j].mass / (len * len);
+                float acc = force / objects[i].mass;
+                objects[i].velocity += acc * dir * deltaTime;
+            }
+        }
+    }
 
-    glm::vec2 mov1 = (objects[0].position - objects[1].position);
-    mov1 = mov1/glm::length(mov1);
-    mov1 = mov1 * speed;
-    objects[1].position = objects[1].position + mov1 * deltaTime;
+    for (PhysicsObject& object : objects) {
+        object.position += object.velocity * deltaTime;
+    }
+
+//    objects[0].position = glm::vec2(0.1f);
+
     return &objects;
 }
