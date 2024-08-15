@@ -6,6 +6,11 @@
 #include "include/glad/glad.h"
 #include <GLFW/glfw3.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 // settings
@@ -14,15 +19,16 @@ const unsigned int SCR_HEIGHT = 800;
 
 const char *vertexShaderSource = "#version 330 core\n"
                                  "layout (location = 0) in vec3 aPos;\n"
+                                 "uniform mat4 transform;\n"
                                  "void main()\n"
                                  "{\n"
-                                 "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+                                 "   gl_Position = transform * vec4(aPos, 1.0f);\n"
                                  "}\0";
 const char *fragmentShaderSource = "#version 330 core\n"
                                    "out vec4 FragColor;\n"
                                    "void main()\n"
                                    "{\n"
-                                   "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+                                   "   FragColor = vec4(1.0f, 0.5f, 0.0f, 1.0f);\n"
                                    "}\n\0";
 
 int main() {
@@ -148,12 +154,14 @@ int main() {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        unsigned int transformLoc = glGetUniformLocation(shaderProgram, "transform");
 
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, nullptr);
 
+        glUniformMatrix4fv((int)transformLoc, 1, GL_FALSE, glm::value_ptr(glm::translate(glm::mat4(1.0f),glm::vec3(0.5,0.0,0.0))));
+        glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, nullptr);
 
         // check and call events and swap the buffers
 

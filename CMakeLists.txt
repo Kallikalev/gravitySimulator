@@ -6,6 +6,12 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(.)
 include_directories(include)
 
+include_directories(include/glm)
+include_directories(include/glm/detail)
+include_directories(include/glm/ext)
+include_directories(include/glm/gtc)
+include_directories(include/glm/gtx)
+include_directories(include/glm/simd)
 
 include_directories(include/glad)
 include_directories(include/GLFW)
