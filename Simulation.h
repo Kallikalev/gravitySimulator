@@ -12,8 +12,8 @@
 
 class Simulation {
 public:
-    unsigned int WORLD_SIZE = 100; // number of arbitrary length units from the center to the edge of the world
-    constexpr const static float G = 100; // gravitational constant
+    constexpr const static float WORLD_SIZE = 100; // number of arbitrary length units from the center to the edge of the world
+    constexpr const static float G = 0; // gravitational constant
     constexpr const static float density = 2.0f; // mass per unit area
 
     struct PhysicsObject {

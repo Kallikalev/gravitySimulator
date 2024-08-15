@@ -173,9 +173,9 @@ int main() {
 
         for (Simulation::PhysicsObject obj : *sim.step(elapsed_time_sec)) {
             glm::mat4 trans = glm::mat4(1.0f);
-            glm::vec3 translation = glm::vec3(obj.position / (float)sim.WORLD_SIZE,0.0f);
+            glm::vec3 translation = glm::vec3(obj.position / Simulation::WORLD_SIZE,0.0f);
             trans = glm::translate(trans,translation);
-            trans = glm::scale(trans,glm::vec3(obj.radius / float(sim.WORLD_SIZE)));
+            trans = glm::scale(trans,glm::vec3(obj.radius / Simulation::WORLD_SIZE));
             glUniformMatrix4fv((int)transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
             glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, nullptr);
         }
